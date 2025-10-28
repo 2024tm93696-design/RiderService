@@ -83,3 +83,24 @@ exports.updateAccountSettings = async (riderId, updateData) => {
   await rider.save();
   return rider.accountSettings;
 };
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Request and cancel Trip
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+exports.requestTrip = async (req, res, next) => {
+  
+   //logic for calling trips api
+};
+
+exports.cancelTrip = async (req, res, next) => {
+   //logic for calling trips api for cancelling trip
+};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Get Riders Payments
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+exports.getMyPayments = async (req, res, next) => {
+   //logic for calling payments api to get all payments of a rider
+};

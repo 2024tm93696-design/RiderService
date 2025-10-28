@@ -134,3 +134,35 @@ exports.updateAccountSettings = async (req, res, next) => {
     next(err);
   }
 };
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Request and cancel Trip
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+exports.requestTrip = async (req, res, next) => {
+  try {
+   //logic for calling trips api
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.cancelTrip = async (req, res, next) => {
+  try {
+   //logic for calling trips api for cancelling trip
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Get Riders Payments
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+exports.getMyPayments = async (req, res, next) => {
+  try {
+   //logic for calling payments api to get all payments of a rider
+  } catch (err) {
+    next(err);
+  }
+};
