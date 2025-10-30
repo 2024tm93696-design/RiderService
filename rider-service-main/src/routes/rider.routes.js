@@ -26,12 +26,12 @@ router.route("/:id")
 
 // Payment Instruments
 router
-  .route("/:id/payments")
+  .route("/:id/payment-instrument")
   .get(getPaymentInstruments)
   .post(addPaymentInstrument);
 
 router
-  .route("/:id/payments/:pid")
+  .route("/:id/payment-instrument/:pid")
   .put(updatePaymentInstrument)
   .delete(deletePaymentInstrument);
 
@@ -39,6 +39,6 @@ router
 router
   .route("/:id/settings")
   .get(getAccountSettings)
-  .put(updateAccountSettings);
+  .patch(updateAccountSettings);
 
 module.exports = router;

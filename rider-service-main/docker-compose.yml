@@ -6,7 +6,7 @@ services:
       - "5005:5005"             # Host:Container port mapping
     environment:
       - PORT=5005
-      - MONGO_URI=mongodb://localhost:27017/riderDB
+      - MONGO_URI=mongodb://riderdb:27017/riderDB
     depends_on:
       - riderdb
     restart: always
@@ -16,7 +16,7 @@ services:
     container_name: riderdb
     restart: always
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - rider_data:/data/db
 

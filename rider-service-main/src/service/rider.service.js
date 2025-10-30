@@ -5,7 +5,16 @@ const Rider = require("../models/rider.model");
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 exports.createRider = async (data) => {
-  return await Rider.create(data);
+  const { rider_id, createdAt, ...safeData } = data;
+
+  const lastRider = await Rider.findOne().sort({ rider_id: -1 }).limit(1);
+  const newRiderId = lastRider ? lastRider.rider_id + 1 : 1;
+
+  return await Rider.create({
+    ...safeData,
+    rider_id: newRiderId,
+    createdAt: new Date(),
+  });
 };
 
 exports.getAllRiders = async () => {
@@ -13,23 +22,23 @@ exports.getAllRiders = async () => {
 };
 
 exports.getRiderById = async (id) => {
-  return await Rider.findById(id);
+  return await Rider.findOne({rider_id:id});
 };
 
 exports.updateRider = async (id, data) => {
-  return await Rider.findByIdAndUpdate(id, data, { new: true });
+  return await Rider.findOneAndUpdate({rider_id:id}, data, { new: true });
 };
 
 exports.deleteRider = async (id) => {
-  return await Rider.findByIdAndDelete(id);
+  return await Rider.findOneAndDelete({rider_id:id});
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 // PAYMENT INSTRUMENTS LOGIC
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-exports.addPaymentInstrument = async (riderId, instrumentData) => {
-  const rider = await Rider.findById(riderId);
+exports.addPaymentInstrument = async (id, instrumentData) => {
+  const rider = await Rider.findOne({rider_id:id});
   if (!rider) return null;
 
   rider.paymentInstruments.push(instrumentData);
@@ -37,13 +46,13 @@ exports.addPaymentInstrument = async (riderId, instrumentData) => {
   return rider;
 };
 
-exports.getPaymentInstruments = async (riderId) => {
-  const rider = await Rider.findById(riderId);
+exports.getPaymentInstruments = async (id) => {
+  const rider = await Rider.findOne({rider_id:id});
   return rider ? rider.paymentInstruments : null;
 };
 
-exports.updatePaymentInstrument = async (riderId, paymentId, updateData) => {
-  const rider = await Rider.findById(riderId);
+exports.updatePaymentInstrument = async (id, paymentId, updateData) => {
+  const rider = await Rider.findOne({rider_id:id});
   if (!rider) return null;
 
   const instrument = rider.paymentInstruments.id(paymentId);
@@ -54,14 +63,14 @@ exports.updatePaymentInstrument = async (riderId, paymentId, updateData) => {
   return instrument;
 };
 
-exports.deletePaymentInstrument = async (riderId, paymentId) => {
-  const rider = await Rider.findById(riderId);
+exports.deletePaymentInstrument = async (id, paymentId) => {
+  const rider = await Rider.findOne({rider_id:id});
   if (!rider) return null;
 
   const instrument = rider.paymentInstruments.id(paymentId);
   if (!instrument) return "not_found";
 
-  instrument.remove();
+  instrument.deleteOne();
   await rider.save();
   return true;
 };
@@ -70,18 +79,20 @@ exports.deletePaymentInstrument = async (riderId, paymentId) => {
 // ACCOUNT SETTINGS LOGIC
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-exports.getAccountSettings = async (riderId) => {
-  const rider = await Rider.findById(riderId);
+exports.getAccountSettings = async (id) => {
+  const rider = await Rider.findOne({rider_id:id});
   return rider ? rider.accountSettings : null;
 };
 
-exports.updateAccountSettings = async (riderId, updateData) => {
-  const rider = await Rider.findById(riderId);
-  if (!rider) return null;
+exports.updateAccountSettings = async (id, updateData) => {
+    const rider = await Rider.findOne({ rider_id: id });
+    if (!rider) return null;
 
-  rider.accountSettings = { ...rider.accountSettings, ...updateData };
-  await rider.save();
-  return rider.accountSettings;
+    // Merge only provided fields into accountSettings
+    Object.assign(rider.accountSettings, updateData);
+
+    await rider.save();
+    return rider.accountSettings;
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

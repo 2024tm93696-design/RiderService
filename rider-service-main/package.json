@@ -17,7 +17,7 @@
     "morgan": "^1.10.0",
     "pg": "^8.11.1",
     "sequelize": "^6.35.0",
-    "uuid": "^13.0.0",
+    "uuid": "^8.3.2",
     "winston": "^3.18.3"
   },
   "devDependencies": {

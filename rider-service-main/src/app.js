@@ -25,17 +25,20 @@ app.use(morgan("dev"));
 app.use(
   expressWinston.logger({
     transports: [
-      new winston.transports.Console(), // logs to terminal
+      new winston.transports.Console(),
     ],
     format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.json()
+      winston.format.colorize(),
+      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+      winston.format.printf(({ level, message, timestamp, meta }) => {
+        return `${timestamp} [${level}]: ${message}`;
+      })
     ),
-    meta: true,
+    meta: false, // hides headers, query, etc.
     msg: (req, res) =>
-      `HTTP ${req.method} ${req.url} [${req.correlationId}] ${res.statusCode}`,
+      `HTTP ${req.method} ${req.originalUrl} [${req.correlationId}] ${res.statusCode}`,
     expressFormat: false,
-    colorize: false,
+    colorize: true,
   })
 );
 

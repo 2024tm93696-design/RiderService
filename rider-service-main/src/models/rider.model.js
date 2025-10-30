@@ -19,16 +19,13 @@ const accountSettingsSchema = new mongoose.Schema({
 
 const riderSchema = new mongoose.Schema(
   {
-    rider_id: { type: String, required: true },
-    username: { type: String, required: true },
+    rider_id: { type: Number, required: true, unique: true },
+    name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    contactNumber: { type: String, required: true },
+    phone: { type: String, required: true },
     paymentInstruments: [paymentInstrumentSchema],
-    accountSettings: accountSettingsSchema
-  },
-  {
-    versionKey: false,
-    timestamps: true
+    accountSettings: accountSettingsSchema,
+    created_at: { type: Date, default: Date.now },
   }
 );
 

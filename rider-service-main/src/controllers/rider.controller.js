@@ -1,15 +1,5 @@
 const riderService = require("../service/rider.service");
-const winston = require("winston");
-
-// 🧱 Setup Winston logger
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [new winston.transports.Console()],
-});
+const logger = require("../utils/logger")
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 // RIDER PROFILE CONTROLLERS
