@@ -1,18 +1,21 @@
 const Rider = require("../models/rider.model");
+const dotenv = require("dotenv");
+dotenv.config();
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 // RIDER PROFILE LOGIC
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 exports.createRider = async (data) => {
   const { rider_id, createdAt, ...safeData } = data;
 
   const lastRider = await Rider.findOne().sort({ rider_id: -1 }).limit(1);
-  const newRiderId = lastRider ? lastRider.rider_id + 1 : 1;
+
+  // Convert lastRider.rider_id to number before adding 1
+  const newRiderId = lastRider ? String(Number(lastRider.rider_id) + 1) : "1";
 
   return await Rider.create({
     ...safeData,
-    rider_id: newRiderId,
+    rider_id: newRiderId,       // keep as string in DB
     createdAt: new Date(),
   });
 };
@@ -99,19 +102,58 @@ exports.updateAccountSettings = async (id, updateData) => {
 // Request and cancel Trip
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+const axios = require("axios");
+
+/**
+ * Request a trip for a rider by calling the Trip Service API.
+ */
 exports.requestTrip = async (req, res, next) => {
-  
-   //logic for calling trips api
+  try {
+    const { rider_id, pickup, drop } = req.body;
+
+    // Input validation
+    if (!rider_id || !pickup || !drop) {
+      return res.status(400).json({ message: "rider_id, pickup, and drop are required" });
+    }
+
+    // Prepare request payload
+    const tripRequestData = {
+      rider_id,
+      pickup,
+      drop
+    };
+
+    // Trip Service base URL
+    // Call Trip Service via Axios
+    const tripResponse = await axios.post(process.env.TRIP_SERVICE_URL, tripRequestData, {
+      headers: { "Content-Type": "application/json" }
+    });
+
+    // If Trip Service responds successfully
+    res.status(201).json({
+      message: "Trip request sent successfully",
+      trip: tripResponse.data
+    });
+  } catch (error) {
+    console.error("Error requesting trip:", error.message);
+
+    if (error.response) {
+      // The Trip Service responded with an error (like 400 or 500)
+      return res.status(error.response.status).json({
+        message: "Trip Service Error",
+        error: error.response.data
+      });
+    }
+
+    // Other errors (network, timeout, etc.)
+    res.status(500).json({
+      message: "Failed to request trip",
+      error: error.message
+    });
+  }
 };
+
 
 exports.cancelTrip = async (req, res, next) => {
    //logic for calling trips api for cancelling trip
-};
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Get Riders Payments
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-exports.getMyPayments = async (req, res, next) => {
-   //logic for calling payments api to get all payments of a rider
 };

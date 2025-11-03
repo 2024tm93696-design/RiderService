@@ -19,7 +19,7 @@ const accountSettingsSchema = new mongoose.Schema({
 
 const riderSchema = new mongoose.Schema(
   {
-    rider_id: { type: Number, required: true, unique: true },
+    rider_id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: true },

@@ -11,7 +11,8 @@ const {
   updatePaymentInstrument,
   deletePaymentInstrument,
   getAccountSettings,
-  updateAccountSettings
+  updateAccountSettings,
+  requestTrip
 } = require("../controllers/rider.controller");
 
 // Rider CRUD
@@ -40,5 +41,9 @@ router
   .route("/:id/settings")
   .get(getAccountSettings)
   .patch(updateAccountSettings);
+
+// Rider Trip Request Endpoint
+router.post("/request-trip", requestTrip);
+
 
 module.exports = router;
