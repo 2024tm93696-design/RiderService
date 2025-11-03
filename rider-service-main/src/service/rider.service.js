@@ -155,5 +155,36 @@ exports.requestTrip = async (req, res, next) => {
 
 
 exports.cancelTrip = async (req, res, next) => {
-   //logic for calling trips api for cancelling trip
+  try {
+    const { rider_id } = req.params;
+
+    // Validate input
+    if (!rider_id) {
+      return res.status(400).json({ message: "rider_id is required" });
+    }
+
+    // Make a request to Trip Service
+    const response = await axios.patch(`${TRIP_SERVICE_URL}${rider_id}/cancel`);
+
+    // Return response from Trip Service
+    res.status(200).json({
+      message: "Trip cancellation request sent successfully",
+      data: response.data
+    });
+  } catch (error) {
+    console.error("Error cancelling trip:", error.message);
+
+    if (error.response) {
+      // Trip Service returned an error
+      return res.status(error.response.status).json({
+        message: "Trip Service Error",
+        error: error.response.data
+      });
+    }
+
+    res.status(500).json({
+      message: "Failed to cancel trip",
+      error: error.message
+    });
+  }
 };
