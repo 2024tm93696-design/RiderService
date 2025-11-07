@@ -6,16 +6,17 @@ dotenv.config();
 // RIDER PROFILE LOGIC
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 exports.createRider = async (data) => {
-  const { rider_id, createdAt, ...safeData } = data;
+  const { createdAt, ...safeData } = data;
 
-  const lastRider = await Rider.findOne().sort({ rider_id: -1 }).limit(1);
-
-  // Convert lastRider.rider_id to number before adding 1
-  const newRiderId = lastRider ? String(Number(lastRider.rider_id) + 1) : "1";
+  let newRiderId = safeData.rider_id;
+  if (!newRiderId) {
+    const lastRider = await Rider.findOne().sort({ rider_id: -1 }).limit(1);
+    newRiderId = lastRider ? String(Number(lastRider.rider_id) + 1) : "1";
+  }
 
   return await Rider.create({
     ...safeData,
-    rider_id: newRiderId,       // keep as string in DB
+    rider_id: newRiderId,
     createdAt: new Date(),
   });
 };

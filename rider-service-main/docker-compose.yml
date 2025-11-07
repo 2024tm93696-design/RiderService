@@ -12,6 +12,12 @@ services:
       - rider_data:/data/db
       - ./init-mongo:/docker-entrypoint-initdb.d
     restart: always
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   rider-service:
     build: .
@@ -24,6 +30,12 @@ services:
     depends_on:
       - riderdb
     restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5005/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
 volumes:
   rider_data:
