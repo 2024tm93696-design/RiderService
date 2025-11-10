@@ -1,0 +1,361 @@
+{
+	"info": {
+		"_postman_id": "rider-service-collection",
+		"name": "Rider Service API",
+		"description": "Complete API collection for Rider Service - manages rider profiles, payment instruments, and account settings",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Riders",
+			"item": [
+				{
+					"name": "Create Rider",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Rider\",\n  \"email\": \"john.rider@example.com\",\n  \"phone\": \"9876543210\",\n  \"address\": \"123 Main St, City\"\n}"
+						},
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders"]
+						},
+						"description": "Create a new rider profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Riders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders"]
+						},
+						"description": "Retrieve all riders"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rider By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/:id",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "rider-id-here"
+								}
+							]
+						},
+						"description": "Get rider details by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Rider",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Rider Name\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"9876543210\",\n  \"address\": \"456 New St, City\"\n}"
+						},
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/:id",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "rider-id-here"
+								}
+							]
+						},
+						"description": "Update rider information"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Rider",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/:id",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "rider-id-here"
+								}
+							]
+						},
+						"description": "Delete a rider by ID"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment Instruments",
+			"item": [
+				{
+					"name": "Add Payment Instrument",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"credit_card\",\n  \"card_number\": \"4111111111111111\",\n  \"expiry_date\": \"12/25\",\n  \"cvv\": \"123\",\n  \"billing_address\": \"123 Main St\"\n}"
+						},
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/:id/payment-instrument",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", ":id", "payment-instrument"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "rider-id-here"
+								}
+							]
+						},
+						"description": "Add a payment instrument for a rider"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment Instruments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/:id/payment-instrument",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", ":id", "payment-instrument"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "rider-id-here"
+								}
+							]
+						},
+						"description": "Get all payment instruments for a rider"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Payment Instrument",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"credit_card\",\n  \"card_number\": \"4111111111111111\",\n  \"expiry_date\": \"12/26\",\n  \"cvv\": \"123\"\n}"
+						},
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/:id/payment-instrument/:pid",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", ":id", "payment-instrument", ":pid"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "rider-id-here"
+								},
+								{
+									"key": "pid",
+									"value": "payment-instrument-id"
+								}
+							]
+						},
+						"description": "Update a payment instrument"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Payment Instrument",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/:id/payment-instrument/:pid",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", ":id", "payment-instrument", ":pid"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "rider-id-here"
+								},
+								{
+									"key": "pid",
+									"value": "payment-instrument-id"
+								}
+							]
+						},
+						"description": "Delete a payment instrument"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Account Settings",
+			"item": [
+				{
+					"name": "Get Account Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/:id/settings",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", ":id", "settings"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "rider-id-here"
+								}
+							]
+						},
+						"description": "Get account settings for a rider"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Account Settings",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"notifications_enabled\": true,\n  \"language\": \"en\",\n  \"currency\": \"USD\"\n}"
+						},
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/:id/settings",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", ":id", "settings"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "rider-id-here"
+								}
+							]
+						},
+						"description": "Update account settings for a rider"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trips",
+			"item": [
+				{
+					"name": "Request Trip",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rider_id\": \"rider-id-here\",\n  \"pickup\": \"Downtown Plaza\",\n  \"drop\": \"Airport Terminal 2\"\n}"
+						},
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/request-trip",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", "request-trip"]
+						},
+						"description": "Request a new trip (calls Trip Service)"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Trip",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders/cancel-trip/:rider_id",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders", "cancel-trip", ":rider_id"],
+							"variable": [
+								{
+									"key": "rider_id",
+									"value": "rider-id-here"
+								}
+							]
+						},
+						"description": "Cancel a trip for a rider"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rider_base_url}}/health",
+							"host": ["{{rider_base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Check if the Rider Service is running"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "rider_base_url",
+			"value": "http://localhost:5005",
+			"type": "string"
+		}
+	]
+}
+

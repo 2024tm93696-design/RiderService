@@ -27,9 +27,8 @@ app.use(morgan("dev"));
 // Health check endpoint
 app.get("/health", async (req, res) => {
   try {
-    const dbState =
-      mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
-
+    // Optional DB check
+    const dbState = mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
     res.status(200).json({
       status: "UP",
       service: "rider-service",
@@ -37,11 +36,7 @@ app.get("/health", async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (err) {
-    res.status(500).json({
-      status: "DOWN",
-      error: err.message,
-      timestamp: new Date().toISOString()
-    });
+    res.status(500).json({ status: "DOWN", error: err.message });
   }
 });
 

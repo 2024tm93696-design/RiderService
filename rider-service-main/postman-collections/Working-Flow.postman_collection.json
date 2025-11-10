@@ -1,0 +1,409 @@
+{
+	"info": {
+		"_postman_id": "working-flow-collection",
+		"name": "Working Flow - Complete Trip Flow",
+		"description": "Complete end-to-end trip flow: Create Rider → Create Driver → Create Trip → Driver Views Available Trips → Driver Accepts Trip → Start Trip → End Trip → Payment → Notification",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Setup - Create Rider",
+			"item": [
+				{
+					"name": "Create Rider",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save rider ID from response",
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"rider_id\", jsonData._id || jsonData.id);",
+									"    console.log(\"Rider ID saved: \" + pm.collectionVariables.get(\"rider_id\"));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Rider\",\n  \"email\": \"john.rider@example.com\",\n  \"phone\": \"9876543210\",\n  \"address\": \"123 Main St, City\"\n}"
+						},
+						"url": {
+							"raw": "{{rider_base_url}}/v1/riders",
+							"host": ["{{rider_base_url}}"],
+							"path": ["v1", "riders"]
+						},
+						"description": "Step 1: Create a rider. The rider ID will be automatically saved for use in subsequent requests."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Setup - Create Driver",
+			"item": [
+				{
+					"name": "Register Driver",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save driver ID from response",
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"driver_id\", jsonData.driver_id);",
+									"    console.log(\"Driver ID saved: \" + pm.collectionVariables.get(\"driver_id\"));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Driver\",\n  \"phone\": \"9876543211\",\n  \"vehicle_type\": \"SUV\",\n  \"vehicle_plate\": \"KA01AB1234\"\n}"
+						},
+						"url": {
+							"raw": "{{driver_base_url}}/api/v1/drivers",
+							"host": ["{{driver_base_url}}"],
+							"path": ["api", "v1", "drivers"]
+						},
+						"description": "Step 2: Register a driver. The driver ID will be automatically saved. Driver is created as active (available) by default."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Rider Creates Trip",
+			"item": [
+				{
+					"name": "Create Trip",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save trip ID from response",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"trip_id\", jsonData.trip_id);",
+									"    console.log(\"Trip ID saved: \" + pm.collectionVariables.get(\"trip_id\"));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rider_id\": \"{{rider_id}}\",\n  \"pickup\": \"Downtown Plaza\",\n  \"drop\": \"Airport Terminal 2\"\n}"
+						},
+						"url": {
+							"raw": "{{trip_base_url}}/v1/trips",
+							"host": ["{{trip_base_url}}"],
+							"path": ["v1", "trips"]
+						},
+						"description": "Step 3: Rider creates a trip. Trip is created with REQUESTED status, waiting for driver acceptance. Trip ID will be saved automatically."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Driver Views Available Trips",
+			"item": [
+				{
+					"name": "Get Available Trips",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trip_base_url}}/v1/trips/available",
+							"host": ["{{trip_base_url}}"],
+							"path": ["v1", "trips", "available"]
+						},
+						"description": "Step 4: Driver views all available trips (REQUESTED status). Driver can see trip details and choose which trip to accept."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Driver Accepts Trip",
+			"item": [
+				{
+					"name": "Accept Trip",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"driver_id\": \"{{driver_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{trip_base_url}}/v1/trips/{{trip_id}}/accept",
+							"host": ["{{trip_base_url}}"],
+							"path": ["v1", "trips", "{{trip_id}}", "accept"]
+						},
+						"description": "Step 5: Driver accepts the trip. Trip status changes to ACCEPTED, and driver becomes unavailable (is_active: false)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Start Trip",
+			"item": [
+				{
+					"name": "Start Trip",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{trip_base_url}}/v1/trips/{{trip_id}}/start",
+							"host": ["{{trip_base_url}}"],
+							"path": ["v1", "trips", "{{trip_id}}", "start"]
+						},
+						"description": "Step 6: Start the trip. Trip status changes to STARTED. Driver remains unavailable."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "7. End Trip (Triggers Payment)",
+			"item": [
+				{
+					"name": "End Trip",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save payment ID if available",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.payment_id) {",
+									"        pm.collectionVariables.set(\"payment_id\", jsonData.payment_id);",
+									"        console.log(\"Payment ID saved: \" + pm.collectionVariables.get(\"payment_id\"));",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"distance\": 10.5\n}"
+						},
+						"url": {
+							"raw": "{{trip_base_url}}/v1/trips/{{trip_id}}/end",
+							"host": ["{{trip_base_url}}"],
+							"path": ["v1", "trips", "{{trip_id}}", "end"]
+						},
+						"description": "Step 7: End the trip. This will: 1) Calculate fare ($2 base + $1.5/km), 2) Process payment via Payment Service, 3) Update trip status to COMPLETE (or UNPAID if payment fails), 4) Mark driver as available again, 5) Payment Service sends receipt notification via Kafka to Notification Service."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "8. Verify - Check Final Status",
+			"item": [
+				{
+					"name": "Get Trip Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trip_base_url}}/v1/trips/{{trip_id}}",
+							"host": ["{{trip_base_url}}"],
+							"path": ["v1", "trips", "{{trip_id}}"]
+						},
+						"description": "Step 8: Verify the trip is completed. Status should be 'COMPLETE' if payment succeeded, or 'UNPAID' if payment failed. Driver should be available again."
+					},
+					"response": []
+				},
+				{
+					"name": "Check Driver Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{driver_base_url}}/api/v1/drivers/{{driver_id}}",
+							"host": ["{{driver_base_url}}"],
+							"path": ["api", "v1", "drivers", "{{driver_id}}"]
+						},
+						"description": "Verify driver is available again (is_active: true)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health Checks",
+			"item": [
+				{
+					"name": "Driver Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{driver_base_url}}/health",
+							"host": ["{{driver_base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Check if Driver Service is running"
+					},
+					"response": []
+				},
+				{
+					"name": "Rider Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rider_base_url}}/health",
+							"host": ["{{rider_base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Check if Rider Service is running"
+					},
+					"response": []
+				},
+				{
+					"name": "Trip Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trip_base_url}}/health",
+							"host": ["{{trip_base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Check if Trip Service is running"
+					},
+					"response": []
+				},
+				{
+					"name": "Payment Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{payment_base_url}}/api/v1/health",
+							"host": ["{{payment_base_url}}"],
+							"path": ["api", "v1", "health"]
+						},
+						"description": "Check if Payment Service is running"
+					},
+					"response": []
+				},
+				{
+					"name": "Notification Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{notification_base_url}}/health",
+							"host": ["{{notification_base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Check if Notification Service is running"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "driver_base_url",
+			"value": "http://localhost:5001",
+			"type": "string"
+		},
+		{
+			"key": "rider_base_url",
+			"value": "http://localhost:5005",
+			"type": "string"
+		},
+		{
+			"key": "trip_base_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "payment_base_url",
+			"value": "http://localhost:8085",
+			"type": "string"
+		},
+		{
+			"key": "notification_base_url",
+			"value": "http://localhost:8082",
+			"type": "string"
+		},
+		{
+			"key": "rider_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "driver_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "trip_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "payment_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
